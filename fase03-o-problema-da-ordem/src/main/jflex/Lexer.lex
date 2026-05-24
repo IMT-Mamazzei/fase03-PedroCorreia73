@@ -1,5 +1,4 @@
 package br.maua.cic303;
-
 import java_cup.runtime.Symbol; // Importação necessária para o CUP
 
 %%
@@ -38,6 +37,7 @@ Number = [0-9]+(\.[0-9]+)?([Ee][+-]?[0-9]+)?
 Letter = [a-zA-Z]
 Digit  = [0-9]
 Identifier = {Letter}({Letter}|{Digit}|_){0,31}
+OversizedIdentifier = Identifier.*
 
 %%
 /* ========================================================================= */
@@ -52,21 +52,34 @@ Identifier = {Letter}({Letter}|{Digit}|_){0,31}
     /* TODO 3: Palavras Reservadas (if, then, else, while) */
     "if"            { return symbol(sym.IF); }
     "then"          { return symbol(sym.THEN); }
+    "else"          { return symbol(sym.ELSE); }
+    "while"          { return symbol(sym.WHILE); }
     /* Adicione as demais aqui... */
 
     /* TODO 4: Pontuação ( ) { } ; */
-    \(              { return symbol(sym.LPAREN); }
+    \(              { return symbol(sym.LPAREN);}
+    \)              { return symbol(sym.RPAREN);}
+    \{              { return symbol(sym.LBRACE);}
+    \}              { return symbol(sym.RBRACE);}
+    ;               { return symbol(sym.SEMI);}
     /* Adicione as demais aqui... */
 
     /* TODO 5: Operadores de Atribuição e Relacionais (=, ==, !=, <, >, <=, >=) */
     /* CUIDADO COM A ORDEM! O JFlex casa a regra que aparece primeiro se houver empate de tamanho. */
     /* Coloque os operadores duplos antes dos simples! */
+    "=="            { return symbol(sym.REL_OP); }
     "="             { return symbol(sym.ASSIGN); }
+    ">="            { return symbol(sym.REL_OP); }
+    "<="            { return symbol(sym.REL_OP); }
+    "!="            { return symbol(sym.REL_OP); }
+    "<"            { return symbol(sym.REL_OP); }
+    ">"            { return symbol(sym.REL_OP); }
     /* Adicione os relacionais aqui e retorne Tag.REL_OP ... */
 
     /* TODO 6: Operadores Matemáticos (+, -, *, /, %) */
     /* Dica: "+" | "-" retornam Tag.ADD_OP. Os outros retornam Tag.MUL_OP */
-    "+" | "-"       { return symbol(sym.ADD_OP, yytext()); }
+    "+" | "-"       { return symbol(sym.ADD_OP, yytext());}
+    "*" | "/" | "%" { return symbol(sym.MUL_OP, yytext());}
     /* Adicione as multiplicações aqui... */
 
     /* Regras para as Macros */
